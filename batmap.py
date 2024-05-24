@@ -35,6 +35,10 @@ def main():
 		(df["product"] != "Electric Vehicles: Chargers") & # Filter out electric vehicle chargers
 		(df["latitude"] > 15) # valid locations
 		]
+
+	print(df_filt["product"].unique())
+	print(df_filt["product"].value_counts())
+
 	# Create dummy variables to assign dot sizes and colors to investment amount and product
 	investment_map = {
 		'Less than 10M': 18,      
@@ -48,6 +52,7 @@ def main():
 	product_map = {
 		'Electric Vehicles: Components': 'white', 												# 39
 		'Electric Vehicles: Assembly': 'white',													# 29
+		"Electric Vehicles: Components; Electric Vehicles: Assembly": 'white',					#  1
 		'Batteries: Minerals Extraction': 'maroon',												# 11
 		'Batteries: Minerals Extraction; Batteries: Materials Processing': 'mediumvioletred',	#  8
 		'Batteries: Materials Processing': 'blue',												# 21
@@ -65,9 +70,6 @@ def main():
 	}
 	df_filt["product_color"] = df['product'].map(product_map)
 
-	# print(df_filt["product"].unique())
-	# print(df_filt["product"].value_counts())
-
 	# Plot each data point
 	ax.scatter(df_filt['longitude'],df_filt['latitude'], s=df_filt["by_amount_cat"], facecolor=df_filt['product_color'], alpha=0.7, transform=ccrs.PlateCarree(),zorder=2)
 
@@ -77,6 +79,6 @@ def main():
 		fig.savefig('post-IRA_investments.png', format='png', dpi=1200)
 
 if __name__ == '__main__':
-	SHOWFIG = False
+	SHOWFIG = True
 	SAVEFIG = True
 	main()
