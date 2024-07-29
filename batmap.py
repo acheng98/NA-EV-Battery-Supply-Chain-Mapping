@@ -50,21 +50,21 @@ def main():
 	df_filt["by_amount_cat"] = df['by_amount'].map(investment_map)
 
 	product_map = {
-		'Electric Vehicles: Components': 'white', 												# 39
-		'Electric Vehicles: Assembly': 'white',													# 29
+		'Electric Vehicles: Components': 'white', 												# 40
+		'Electric Vehicles: Assembly': 'white',													# 32
 		"Electric Vehicles: Components; Electric Vehicles: Assembly": 'white',					#  1
-		'Batteries: Minerals Extraction': 'maroon',												# 11
+		'Batteries: Minerals Extraction': 'maroon',												# 12
 		'Batteries: Minerals Extraction; Batteries: Materials Processing': 'mediumvioletred',	#  8
-		'Batteries: Materials Processing': 'blue',												# 21
+		'Batteries: Materials Processing': 'blue',												# 22
 		'Batteries: Recycling': 'navy',															# 15
 		'Batteries: Recycling; Batteries: Materials Processing': 'navy',						#  3
-		'Batteries: Components': 'darkorange', 													# 41
-		'Batteries: Cells': 'gold',																# 30
-		'Batteries: Packs': 'gold',																# 38
-		'Batteries: Cells; Batteries: Packs': 'gold',											# 15
+		'Batteries: Components': 'darkorange', 													# 47
+		'Batteries: Cells': 'gold',																# 32
+		'Batteries: Packs': 'gold',																# 44
+		'Batteries: Cells; Batteries: Packs': 'gold',											# 16
 		'Batteries: Minerals Extraction; Batteries: Recycling': 'black',						#  1
 		'Batteries: Recycling; Batteries: Cells': 'black',										#  1
-		'Batteries: Materials Processing; Batteries: Components': 'black', 						#  4
+		'Batteries: Materials Processing; Batteries: Components': 'black', 						#  5
 		'Batteries: Components; Batteries: Cells': 'black', 									#  1
 		'Batteries: Components; Batteries: Cells; Batteries: Recycling': 'black',				#  1
 	}
