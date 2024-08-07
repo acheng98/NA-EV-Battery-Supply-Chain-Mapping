@@ -4,7 +4,7 @@ library(ggplot2)
 # Define UI for application
 ui <- fluidPage(
   # Application title
-  titlePanel("Critical Mineral Price Effect Explorer for the Inflation Reduction Act"),
+  titlePanel("Critical Mineral Price Effect Explorer - Battery Manufacturing and Inflation Reduction Act"),
   
   wellPanel(
     p(HTML("This tool accompanies the forthcoming study 'U.S. Industrial Policy Could Reduce Electric Vehicle Battery Supply Chain 
@@ -16,7 +16,7 @@ ui <- fluidPage(
            <a href='https://doi.org/10.1038/s41893-023-01079-8'>Trost and Dunn (2023)</a>. For more information about the price 
            ranges for each mineral, other costs of production, the scenarios under which batteries of each chemistry can qualify 
            for the 30D credit, and more, please see the paper and supplementary information, particularly Supplementary Data S2, 
-           S3, and S5 and Supplementary Text S2. {To add - link to this code.}"),
+           S3, and S5 and Supplementary Text S2."),
     tags$ul(
       tags$li(HTML("<a href='https://en.wikipedia.org/wiki/Lithium-ion_battery#Cathode'> Battery Chemistries</a>: LFP = Lithium Iron 
                     Phosphate; NMC811 = Nickel Manganese Cobalt Oxide, where '811' represents the ratios of nickel to manganese to 
@@ -24,14 +24,14 @@ ui <- fluidPage(
       tags$li(HTML("Costs were modeled with the Argonne National Lab's <a href='https://www.anl.gov/cse/batpac-model-software'>BatPaC</a> 
                     model, using critical minerals data from the Department of Energy and Argonne National Lab's 
                     <a href='https://www.energy.gov/eere/greet'>GREET</a> model.")),
-      tags$li(HTML("Implied costs were found by calculating the difference between the total amount of material multipled by the cost 
-                   the material, e.g. total amount of cathode used in the model by price of the cathode, less the total cost of the raw
-                   material used in the cathode, per GREET, times the price of each raw material. We assume that these implied costs 
-                   occur due to costs in the supply chain, such as processing/refining/manufacturing costs, transportation, markups
-                   due to profit, etc. The 'other' material costs refer to all other material costs, as calculated by BatPaC, less the 
-                   cost of the cathode materials, anode materials, and the cost of critical minerals not accounted for in the cathode
-                   and anode.")),
-      tags$li(HTML("The underlying code and other code related to this paper can be found at 
+      tags$li(HTML("Implied 'other costs were found by calculating the difference between the total amount of material multipled by the 
+                   cost of the material, e.g. total amount of cathode used in the model by price of the cathode, less the total cost of 
+                   the raw material used in the cathode per GREET, times the price of each raw material. We assume that these implied 
+                   costs occur due to other costs in the supply chain, such as non-critical mineral costs, processing/refining/
+                   manufacturing costs, transportation, markups due to profit, etc. The 'other' material costs refer to all other 
+                   material costs, as calculated by BatPaC, less the cost of the cathode materials, anode materials, and the cost of 
+                   critical minerals not accounted for in the cathode and anode.")),
+      tags$li(HTML("The underlying code for this applet, as well as other code related to this paper, can be found at 
                    <a href='https://www.doi.org/10.5281/zenodo.11182063'>doi.org/10.5281/zenodo.11182063</a>."))
       ),
     )
@@ -40,17 +40,17 @@ ui <- fluidPage(
   # Sidebar with a slider input for aluminum price
   sidebarLayout(
     sidebarPanel(
-      sliderInput('lithiumPrice', 'Lithium Price ($/kg)', min = 1, max = 161, 
+      sliderInput('lithiumPrice', 'Lithium Price ($/kg contained Li)', min = 1, max = 161, 
                   value = 26.78, step = 2, round = 0),
-      sliderInput('cobaltPrice', 'Cobalt Price ($/kg)', min = 22, max = 94, 
+      sliderInput('cobaltPrice', 'Cobalt Price ($/kg contained Co)', min = 22, max = 94, 
                   value = 47, step = 1, round = 0),
-      sliderInput('nickelPrice', 'Nickel Price ($/kg)', min = 10, max = 32, 
+      sliderInput('nickelPrice', 'Nickel Price ($/kg contained Ni)', min = 10, max = 32, 
                   value = 12.36, step = 0.04, round = 0),
-      sliderInput('manganesePrice', 'Manganese Price ($/kg)', min = 2.87, max = 6.67, 
+      sliderInput('manganesePrice', 'Manganese Price ($/kg contained Mn)', min = 2.87, max = 6.67, 
                   value = 5.71, step = 0.02, round = 0),
-      sliderInput('aluminumPrice', 'Aluminum Price ($/kg)', min = 1, max = 4, 
+      sliderInput('aluminumPrice', 'Aluminum Price ($/kg contained Al)', min = 1, max = 4, 
                   value = 2.12, step = 0.01, round = 0),
-      sliderInput('graphitePrice', 'Graphite Price ($/kg)', min = 0.75, max = 1.35, 
+      sliderInput('graphitePrice', 'Graphite Price ($/kg contained G)', min = 0.75, max = 1.35, 
                   value = 1.01, step = 0.01, round = 0),
       checkboxInput('includeConstantCosts', 'Show constant, non-mineral costs', value = TRUE),
       actionButton('reset', 'Reset Prices'),
@@ -74,8 +74,11 @@ ui <- fluidPage(
       plotOutput('pricePlot'),
       
       tags$hr(),
+      tags$div(style = "margin-bottom: 20px;"),
       
-      tags$div(style = "margin-bottom: 40px;"),
+      p(h4("Critical mineral value-percentage combinations for exploring IRA 30D 'New Clean Vehicle Credit' compliance scenarios")),
+      
+      tags$div(style = "margin-bottom: 20px;"),
       fluidRow(uiOutput("graphPanel")),
     )
   )

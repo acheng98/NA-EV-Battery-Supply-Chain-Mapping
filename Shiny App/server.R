@@ -19,18 +19,18 @@ function(input, output, session) {
   # Define the constant costs for each chemistry
   other_prod_costs <- rbind(
     data.frame(
-      Cost = rep(c("Implied Cathode SC Non-Material Costs"), times=3),
+      Cost = rep(c("Implied Other Cathode Costs"), times=3),
       Value = c(1378.31/cap_lfp, 2061.20/cap_nmc, 2430.79/cap_nca),
       Chem = rep(c("LFP", "NMC811", "NCA"))
     ), 
     data.frame(
-      Cost = rep(c("Implied Anode SC Non-Material Costs"), times=3),
+      Cost = rep(c("Implied Other Anode Costs"), times=3),
       Value = c(551.89/cap_lfp, 493.20/cap_nmc, 495.66/cap_nca),
       Chem = rep(c("LFP", "NMC811", "NCA"))
     ),
     data.frame(
       Cost = rep(c("Implied Other Material Costs"), times=3),
-      Value = c(3501.65/cap_lfp, 3345.74/cap_nmc, 3443.18/cap_nca),
+      Value = c(3356.74/cap_lfp, 3237.14/cap_nmc, 3332.77/cap_nca),
       Chem = rep(c("LFP", "NMC811", "NCA"))
     ),
     data.frame(
@@ -139,8 +139,8 @@ function(input, output, session) {
       data$Cost <- factor(data$Cost, levels = c("Warranty", "Profits", "Other Fixed Costs",
                                                 "Depreciation", "Variable Overhead", "Energy",
                                                 "Direct Labor", "Implied Other Material Costs",
-                                                "Implied Anode SC Non-Material Costs",
-                                                "Implied Cathode SC Non-Material Costs",
+                                                "Implied Other Anode Costs",
+                                                "Implied Other Cathode Costs",
                                                 "Graphite", "Aluminum", "Manganese", "Nickel", 
                                                 "Cobalt", "Lithium"))
     }
@@ -152,8 +152,8 @@ function(input, output, session) {
       geom_bar(stat = "identity") +
       scale_fill_manual(values = c("Lithium" = "#337538", "Cobalt" = "#2e2585", "Nickel" = "#5da899", 
                                    "Manganese" = "#dccd7d", "Aluminum" = "#dddddd", "Graphite" = "#434343",
-                                   "Implied Cathode SC Non-Material Costs" = "#F1C233",
-                                   "Implied Anode SC Non-Material Costs" = "#FFE59A",
+                                   "Implied Other Cathode Costs" = "#F1C233",
+                                   "Implied Other Anode Costs" = "#FFE59A",
                                    "Implied Other Material Costs" = "#cc0201",
                                    "Direct Labor" = "#cc4124ff", "Energy" = "#b45f07ff",
                                    "Variable Overhead" = "#ff0002ff", "Depreciation" = "#dd5050ff",
@@ -224,6 +224,7 @@ function(input, output, session) {
             labels = scales::label_percent(),
             limits = c(0,1.01)
           ) +
+          geom_hline(yintercept = 0.8, color = "red", linetype = "dashed", size = 0.5) +
           theme_minimal() + 
           theme(legend.position = "none", 
                 panel.grid.minor = element_line(size = 0.1), 
