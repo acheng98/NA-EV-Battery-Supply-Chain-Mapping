@@ -1,7 +1,7 @@
 import csv
 import pandas as pd 
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+import cartopy.crs as ccrs # Source of basemaps/shapefiles
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -25,7 +25,7 @@ def main():
 	ax.add_feature(cfeature.LAKES)
 	ax.coastlines()
 	ax.set_extent([-121, -72, 19, 52], ccrs.Geodetic())
-	ax.set_title("IRA-Affected Investments, Electric Vehicle Battery Supply Chain, North America", fontsize=14)
+	# ax.set_title("IRA-Affected Investments, Electric Vehicle Battery Supply Chain, North America", fontsize=14)
 
 	# PROCESS DATAPOINTS
 	df = pd.read_csv("SI. IRA Incentives - S9. Post-IRA EV Supply Chain Investments.csv")
@@ -72,6 +72,18 @@ def main():
 
 	# Plot each data point
 	ax.scatter(df_filt['longitude'],df_filt['latitude'], s=df_filt["by_amount_cat"], facecolor=df_filt['product_color'], alpha=0.7, transform=ccrs.PlateCarree(),zorder=2)
+
+	# Add gridlines for latitude and longitude
+	gl = ax.gridlines(draw_labels=True, color='gray', alpha=0.5, linestyle='--')
+	gl.bottom_labels = False
+	gl.right_labels = False
+
+	# Ensure labels are placed outside the map
+	gl.x_inline = False
+	gl.y_inline = False
+
+	gl.xlabel_style = {'size': 10}
+	gl.ylabel_style = {'size': 10}
 
 	if SHOWFIG:
 		plt.show()
