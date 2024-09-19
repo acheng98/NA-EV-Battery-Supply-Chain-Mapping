@@ -547,7 +547,7 @@ function(input, output, session) {
                                            "Dual Credit Value" = "#e69138")
               ) +
               labs(
-                title = sprintf("Cost of Production and Incentives for %s, per kWh", chem_local),
+                title = sprintf("Cost of Production and Incentives for %s, per kWh, 70 kWh battery", chem_local),
                 x = "Values in USD", y = ""
               ) +
               xlim(0, 180) +

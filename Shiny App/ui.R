@@ -54,6 +54,28 @@ title_tooltip_container <- function(title, tooltipText) {
   )
 }
 
+selectInput_tooltip_container <- function(inputId, label, choices, tooltipText) {
+  tags$div(
+    class = "input-container",
+    tags$div(
+      class = "input-tooltip-container",
+      tags$label(
+        class = "control-label",
+        `for` = inputId,
+        label
+      ),
+      tags$a(
+        bs_icon("info-circle"),
+        class = "tooltip-icon-2",
+        `data-bs-toggle` = "tooltip",
+        `data-bs-placement` = "right",
+        title = tooltipText
+      )
+    ),
+    selectInput(inputId, NULL, choices)
+  )
+}
+
 # Define UI for application
 ui <- fluidPage(
   # JavaScript
@@ -85,16 +107,21 @@ ui <- fluidPage(
   tags$div(style = "margin-bottom: 15px;"),
   
   navset_tab(
-    nav_panel(title = "Scenarios",
+    nav_panel(title = "Credit Scenario Explorer",
        tags$div(style = "margin-bottom: 20px;"),
        sidebarLayout(
          sidebarPanel(
            span(h4("Inflation Reduction Act (USA) Options")),
-           selectInput("USScen", "US Pre-defined Scenarios", choices = c("User","2024 Tesla Model Y Long Range (75 kWh)", 
-                                                                         "2023 Chevrolet Bolt EUV (65 kWh)", 
-                                                                         "2024 Hyundai Ioniq Long Range (77.4 kWh)", 
-                                                                         "2024 Mustang Mach-E Standard Range (70 kWh)",
-                                                                         "2024 Volkswagen ID.4 Standard Range (62 kWh)")),
+           selectInput_tooltip_container("USScen", "US Pre-defined Scenarios", 
+                                         choices = c("User","2024 Tesla Model Y Long Range (75 kWh)", 
+                                                     "2023 Chevrolet Bolt EUV (65 kWh)", 
+                                                     "2024 Hyundai Ioniq Long Range (77.4 kWh)", 
+                                                     "2024 Mustang Mach-E Standard Range (70 kWh)",
+                                                     "2024 Volkswagen ID.4 Standard Range (62 kWh)"),
+                                         "The graphs are made for a 70 kWh battery; the scenarios use chemistries
+                                         and supply chains for EVs with similarly sized batteries, but we do not 
+                                         guarantee that these are necessarily perfectly representative of their 
+                                         production costs, supply chain choices, or credit qualifications."),
            # Checkboxes
            input_switch_tooltip('45XCM', 'Critical Mineral Processing Credit', value = TRUE, "A 45X Manufacturing Credit. 10% of production cost for 
                                 mineral extraction only (not the value of the minerals themselves). Claimable for domestic (US-based) production only."),
@@ -216,7 +243,7 @@ ui <- fluidPage(
       )
     ),
     
-    nav_panel("Minerals",
+    nav_panel("Minerals Price Explorer",
       # Sidebar with a slider input for aluminum price
       tags$div(style = "margin-bottom: 20px;"),
       
