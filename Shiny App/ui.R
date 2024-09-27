@@ -87,10 +87,11 @@ ui <- fluidPage(
   ")),
   
   # Application title
-  titlePanel("Critical Mineral Price Effect Explorer - Battery Manufacturing and Inflation Reduction Act"),
+  titlePanel("The Inflation Reduction Act and EV Battery Supply Chains - Scenario Explorer"),
   wellPanel(
-    p(HTML("This tool accompanies the forthcoming study 'U.S. Industrial Policy Could Reduce Electric Vehicle Battery Supply Chain 
-           Vulnerabilities and Influence Battery Technology Choice' in the journal <i>Nature Energy</i>.")),
+    p(HTML("This tool accompanies the study <a href='https://www.nature.com/articles/s41560-024-01649-w'> 'U.S. Industrial Policy Could 
+           Reduce Electric Vehicle Battery Supply Chain Vulnerabilities and Influence Battery Technology Choice'</a> in the journal 
+           <a href='https://www.nature.com/nenergy/'><i>Nature Energy</i></a>.")),
     tags$ul(
       tags$li(HTML("<a href='https://en.wikipedia.org/wiki/Lithium-ion_battery#Cathode'> Battery Chemistries</a>: LFP = Lithium Iron 
                         Phosphate; NMC811 = Nickel Manganese Cobalt Oxide, where '811' represents the ratios of nickel to manganese to 
@@ -139,14 +140,15 @@ ui <- fluidPage(
            input_switch_tooltip('30DComp', 'Battery Component-Based Purchase Credit)', value = TRUE, "A 30D New Clean Vehicle Credit. $3750 per vehicle, 
                                 depending on the source of the battery components in the vehicle. With critical mineral-based credit, replaced previous 
                                 30D credit that was worth $7500 total. For details, see scrolling info box below."),
-           input_switch_tooltip('45WLease', 'Credit for vehicles for commercial use (including leasing)', value = FALSE, "The 45W Commercial Clean 
-                                Vehicle Credit, for any vehicle sold for a commercial use (including leases to consumers). For further detail, see 
-                                scrolling info box below."),
+           input_switch_tooltip('45WLease', 'Credit for commercial vehicles (including leasing)', value = FALSE, "The 45W Commercial Clean 
+                                Vehicle Credit, for any vehicle sold for a commercial use (including leases to consumers), based on the incremental price. 
+                                of an EV versus a traditional vehicle. For further detail, see the scrolling info box below."),
             
            input_slider_tooltip('incrementalPrice', 'Incremental Price of an Electric Vehicle (USD)', min = 0, max = 12000, 
                        value = 7500, step = 100, round = 0, tooltipText = "The additional cost of an electric vehicle relative to a comparable internal 
-                       combustion engine (ICE/traditional) vehicle. This is to be reevaluated on a regular basis by the Department of Energy, and capped
-                       at a maximum value of $7500. For the year 2024, the incremental price was determined to be that maximum amount of $7500."),
+                       combustion engine (ICE/traditional) vehicle, which is used as the value of the leasing credit. This is to be reevaluated on a 
+                       regular basis by the Department of Energy, and capped at a maximum value of $7500. For the year 2024, the incremental price was 
+                       determined to be that maximum amount of $7500."),
            
            actionButton('resetUSAValues', 'Reset to default USA input values'),
            
