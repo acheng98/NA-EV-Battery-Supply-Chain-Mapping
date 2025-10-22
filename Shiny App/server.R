@@ -205,13 +205,6 @@ function(input, output, session) {
   #   }
   # })
   
-  # Check value of inputs
-  observe({
-    incentVals$incPrice <- input$incrementalPrice
-    incentVals$dcVal <- input$dualCreditVal
-    incentVals$dcNum <- input$dualCreditNum
-  })
-  
   # Check which incentives selected 
   observe({
     cbStates$`45XCM` <- input$`45XCM`
@@ -263,7 +256,7 @@ function(input, output, session) {
   })
   
   # Check scenarios 
-    observe({
+  observe({
     if (input[["USScen"]] == "User") {
       # Do nothing
     }
@@ -342,11 +335,28 @@ function(input, output, session) {
       updateCheckboxInput(session, "graphChCost", value = FALSE)
       updateCheckboxInput(session, "graphChInc", value = FALSE)
     }
+    if (input[["USScen"]] == "Post-OBBBA Tesla Model Y vs Chinese NCA generic") {
+      updateCheckboxInput(session, "45XCM", value = FALSE)
+      updateCheckboxInput(session, "45XEAM", value = TRUE)
+      updateCheckboxInput(session, "45XCell", value = TRUE)
+      updateCheckboxInput(session, "45XMod", value = TRUE)
+      updateCheckboxInput(session, "30DCrit", value = FALSE)
+      updateCheckboxInput(session, "30DComp", value = FALSE)
+      updateCheckboxInput(session, "45WLease", value = FALSE)
+      
+      updateCheckboxInput(session, "lfpGraph", value = FALSE)
+      updateCheckboxInput(session, "nmcGraph", value = FALSE)
+      updateCheckboxInput(session, "ncaGraph", value = TRUE)
+      updateCheckboxInput(session, "graphChCost", value = TRUE)
+      updateCheckboxInput(session, "graphChInc", value = TRUE)
+    }
   })
   
   # Reset button functionality
   observeEvent(input$resetUSAValues, {
     updateSliderInput(session, "incrementalPrice", value = 7500)
+    updateSliderInput(session, "CM_slider", value = 10)
+    updateSliderInput(session, "EAM_slider", value = 10)
     updateCheckboxInput(session, "45XCM", value = TRUE)
     updateCheckboxInput(session, "45XEAM", value = TRUE)
     updateCheckboxInput(session, "45XCell", value = TRUE)
@@ -371,8 +381,8 @@ function(input, output, session) {
   
   # Stack data
   sum_mat <- data.frame(Cost = rep("Material Costs", times = 3),  # Replace Cost with "Material Costs"
-    Value = crit_min$Value + other_cath$Value + other_anode$Value + other_mat$Value,
-    Chem = crit_min$Chem # LFP, NMC811, NCA
+                        Value = crit_min$Value + other_cath$Value + other_anode$Value + other_mat$Value,
+                        Chem = crit_min$Chem # LFP, NMC811, NCA
   )
   tot_mat_costs <- reactive({ 
     cost_stack(sum_mat,input$materialPct)
@@ -399,19 +409,25 @@ function(input, output, session) {
     cost_stack(warr,input$capitalPct)
   })
   
-  `45X_CM` <- data.frame(
-    Cost = rep(c("Critical Minerals Processing"), times=3),
-    Value = c(0.34, 1.83, 1.67),
-    Chem = rep(c("LFP", "NMC811", "NCA"))
-  )
-  tot_45X_CM <- incent_stack(`45X_CM`,FALSE)
+  tot_45X_CM <- reactive({
+    cm_ratio <- input$CM_slider/10  
+    `45X_CM` <- data.frame(
+      Cost = rep(c("Critical Minerals Processing"), times=3),
+      Value = c(0.34*cm_ratio, 1.83*cm_ratio, 1.67*cm_ratio),
+      Chem = rep(c("LFP", "NMC811", "NCA"))
+    )
+    tot_45X_CM <- incent_stack(`45X_CM`,FALSE)
+  })
   
-  `45X_EA` <- data.frame(
-    Cost = rep(c("Electroactive Materials Production"), times=3),
-    Value = c(5.32, 7.61, 8.19),
-    Chem = rep(c("LFP", "NMC811", "NCA"))
-  )
-  tot_45X_EA <- incent_stack(`45X_EA`,FALSE)
+  tot_45X_EA <- reactive({
+    eam_ratio <- input$EAM_slider/10
+    `45X_EA` <- data.frame(
+      Cost = rep(c("Electroactive Materials Production"), times=3),
+      Value = c(5.32*eam_ratio, 7.61*eam_ratio, 8.19*eam_ratio),
+      Chem = rep(c("LFP", "NMC811", "NCA"))
+    )
+    tot_45X_EA <- incent_stack(`45X_EA`,FALSE)
+  })
   
   `45X_Cell` <- data.frame(
     Cost = rep(c("Battery Cell Production"), times=3),
@@ -470,8 +486,8 @@ function(input, output, session) {
     data <- rbind(tot_mat_costs(), tot_labor(), tot_energy(), tot_var_over(), tot_deprec(), 
                   tot_other_fixed(), tot_prof(), tot_warr(), tot_DC())
     
-    if (input$`45XCM`) {data <- rbind(data,tot_45X_CM)}
-    if (input$`45XEAM`) {data <- rbind(data,tot_45X_EA)}
+    if (input$`45XCM`) {data <- rbind(data,tot_45X_CM())}
+    if (input$`45XEAM`) {data <- rbind(data,tot_45X_EA())}
     if (input$`45XCell`) {data <- rbind(data,tot_45X_Cell)}
     if (input$`45XMod`) {data <- rbind(data,tot_45X_Mod)}
     if (input$`30DCrit`) {data <- rbind(data,tot_30D_min)}
@@ -480,7 +496,7 @@ function(input, output, session) {
     
     data
   })
-
+  
   # Panel 1 Graph for comparing effect of incentives 
   output$comparePlots <- renderUI({
     chemistries <- c("LFP", "NMC811", "NCA")
@@ -501,15 +517,15 @@ function(input, output, session) {
             data_subset <- subset(data, Chem == chem_local)
             data_subset$Cost <- factor(data_subset$Cost, 
                                        levels = c("Dual Credit Value", 
-                                       "Commercial and Leased Vehicle Credit",
-                                       "Battery Component-Based Purchase Credit",
-                                       "Critical Minerals-Based Purchase Credit",
-                                       "Critical Minerals Processing",
-                                       "Electroactive Materials Production", 
-                                       "Battery Module Production", "Battery Cell Production", 
-                                       "Warranty", "Profits", "Other Fixed Costs",
-                                       "Depreciation", "Variable Overhead", 
-                                       "Energy", "Direct Labor", "Material Costs"))
+                                                  "Commercial and Leased Vehicle Credit",
+                                                  "Battery Component-Based Purchase Credit",
+                                                  "Critical Minerals-Based Purchase Credit",
+                                                  "Critical Minerals Processing",
+                                                  "Electroactive Materials Production", 
+                                                  "Battery Module Production", "Battery Cell Production", 
+                                                  "Warranty", "Profits", "Other Fixed Costs",
+                                                  "Depreciation", "Variable Overhead", 
+                                                  "Energy", "Direct Labor", "Material Costs"))
             
             data_subset$Type_Location <- factor(interaction(data_subset$Type, data_subset$Location),
                                                 levels = c("Incentives.China", "Costs.China", 
@@ -584,7 +600,7 @@ function(input, output, session) {
   
   # Define the constant costs for each chemistry
   other_costs  <- rbind(other_cath,other_anode,other_mat,labor,energy,var_over,deprec,other_fixed,prof,warr)
-
+  
   # Reset button functionality
   observeEvent(input$resetPrice, {
     updateSliderInput(session, "lithiumPrice", value = 26.78)
@@ -603,7 +619,7 @@ function(input, output, session) {
   totCo <- reactive({
     sapply(co_amt, function(factor) input$cobaltPrice * factor)
   })
-
+  
   totNi <- reactive({
     sapply(ni_amt, function(factor) input$nickelPrice * factor)
   })
@@ -659,7 +675,7 @@ function(input, output, session) {
                                                 "Graphite", "Aluminum", "Manganese", "Nickel", 
                                                 "Cobalt", "Lithium"))
     }
-
+    
     data$Chem <- factor(data$Chem, levels = c("NCA","NMC811","LFP"))
     
     # Determine xlim based on checkbox input
@@ -676,7 +692,7 @@ function(input, output, session) {
                                    "Variable Overhead" = "#ff0002ff", "Depreciation" = "#dd5050ff",
                                    "Other Fixed Costs" = "#e06666ff", "Profits" = "#ea9999",
                                    "Warranty" = "#f4cccc"
-                                   )) +
+      )) +
       labs(title = "Cost of Production, per kWh", subtitle = "Cost for 500,000 packs per year, 70 kWh packs; Fig. 3 in paper. Please note that all non-mineral costs are fixed (constant) for this tool.", 
            x = "Cost", y = "Chemistry") +
       xlim(0, xl) +  # Set fixed range for x-axis
@@ -783,7 +799,7 @@ function(input, output, session) {
              checkboxInput(gr_cb, label = paste("Gr, Scenario ", i), value=TRUE),
              
              selectInput(dropdown, "Pre-defined scenarios", choices = c("User","All", "2024 Generic", "2024 Tesla")),
-            )
+      )
     })
     
     do.call(fluidRow, plot_list)
